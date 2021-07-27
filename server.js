@@ -15,14 +15,17 @@ let field = [
         [" ", " ", " "],
         [" ", " ", " "],
       ];
-      players.map(player => { player.socket.write('NEW GAME') });
+      players.forEach(player => { 
+          player.socket.write('\n')   
+          player.socket.write('NEW GAME') 
+        });
       if (userOnline == 2) show(field);
 }
 
 const playerTurn = (position, field) => {
     let pos = position.split(' ');
-    const x = Number(pos[0]);
-    const y = Number(pos[1]);
+    const y = Number(pos[0]);
+    const x = Number(pos[1]);
     if(x <= 2 && x >= 0 && y >= 0 && y <= 2) {
     if (field[x][y] === ' ') {
         field[x][y] = nextMove.symbol;
@@ -32,14 +35,14 @@ const playerTurn = (position, field) => {
                 socket: nextMove.socket === players[0].socket ? players[1].socket : players[0].socket,
                 symbol: nextMove.symbol === 'x' ? 'o' : 'x'
             }
-            players.map(player => {
+            players.forEach(player => {
                 if (player.socket === nextMove.socket) {
                     player.socket.write('You move');
                     player.socket.write('\n')
                 }
             }); 
         } else {
-            players.map(player => {
+            players.forEach(player => {
                 if (player.socket === nextMove.socket) {
                     player.socket.write('YOU WIN')
                 }
@@ -83,7 +86,7 @@ const show = (field) => {
                 fieldView += '\n--+---+--\n';
             }
         }
-        players.map(player => {
+        players.forEach(player => {
             player.socket.write('\n')
             player.socket.write(fieldView)
             player.socket.write('\n')
@@ -114,7 +117,7 @@ const server = createServer(socket => {
     socket.on('close', () => {
         userOnline--;
         nextMove = {};
-        players.splice(players.indexOf(player => player.socket === socket), 1);
+        players.splice(players.findIndex(player => player.socket === socket), 1);
     })
     
 });
